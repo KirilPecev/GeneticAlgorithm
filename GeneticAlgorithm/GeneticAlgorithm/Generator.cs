@@ -26,7 +26,7 @@
 
             Console.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest}");
 
-            while (population.Fittest < 5)
+            while (population.Fittest < population.GeneLength)
             {
                 generationCount++;
 
@@ -50,7 +50,7 @@
             Console.WriteLine($"Fitness: {this.population.GetFittest().Fitness}");
             Console.WriteLine("Genes: ");
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < population.GeneLength; i++)
             {
                 Console.Write(this.population.GetFittest().Genes[i]);
             }

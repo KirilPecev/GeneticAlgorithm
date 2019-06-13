@@ -4,22 +4,26 @@
     {
         private readonly int PopulationSize;
 
-        public Population(int size)
+        public Population(int populationSize, int geneLength)
         {
-            this.PopulationSize = size;
-            this.Individuals = new Individual[PopulationSize];
+            this.PopulationSize = populationSize;
+            this.GeneLength = geneLength;
             this.Fittest = 0;
+
+            this.Individuals = new Individual[PopulationSize];
         }
 
         public Individual[] Individuals { get; set; }
 
         public int Fittest { get; private set; }
 
+        public int GeneLength { get; private set; }
+
         public void InitializePopulation()
         {
             for (int i = 0; i < PopulationSize; i++)
             {
-                this.Individuals[i] = new Individual();
+                this.Individuals[i] = new Individual(this.GeneLength);
             }
         }
 

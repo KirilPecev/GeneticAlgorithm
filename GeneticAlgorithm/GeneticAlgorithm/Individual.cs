@@ -4,9 +4,9 @@
 
     public class Individual
     {
-        public Individual()
+        public Individual(int geneLength)
         {
-            this.GeneLength = 5;
+            this.GeneLength = geneLength;
             this.Fitness = 0;
             this.Genes = new int[GeneLength];
 
@@ -15,7 +15,7 @@
 
         public int[] Genes { get; private set; }
 
-        public int GeneLength { get; set; }
+        public int GeneLength { get; private set; }
 
         public int Fitness { get; private set; }
 
@@ -27,14 +27,12 @@
             {
                 this.Genes[i] = Math.Abs(rn.Next() % 2);
             }
-
-            this.Fitness = 0;
         }
 
         public void CalculateFitness()
         {
             this.Fitness = 0;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < this.GeneLength; i++)
             {
                 if (this.Genes[i] == 1)
                 {

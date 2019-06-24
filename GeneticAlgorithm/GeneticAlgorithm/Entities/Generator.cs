@@ -1,19 +1,23 @@
 ﻿namespace GeneticAlgorithm
 {
+    using GeneticAlgorithm.Core.IO.Contracts;
+    using GeneticAlgorithm.Entities.Contracts;
     using System;
 
-    public class Generator
+    public class Generator : IGenerator
     {
-        private readonly Population population;
+        private readonly IPopulation population;
+        private readonly IWriter writer;
 
-        public Generator(Population population)
+        public Generator(IPopulation population, IWriter writer)
         {
             this.population = population;
+            this.writer = writer;
         }
 
-        public Individual Fittest { get; private set; }
+        public IIndividual Fittest { get; private set; }
 
-        public Individual SecondFittest { get; private set; }
+        public IIndividual SecondFittest { get; private set; }
 
         public void Generate()
         {
@@ -24,7 +28,7 @@
 
             int generationCount = 0;
 
-            Console.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest}");
+            this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest}");
 
             while (population.Fittest < population.GeneLength)
             {
@@ -34,7 +38,8 @@
 
                 this.Crossover();
 
-                if (rn.Next() % 7 < 5)
+                //Do mutation under a random probability
+                if (rn.Next() % 7 < this.population.GeneLength)
                 {
                     Mutation();
                 }
@@ -43,16 +48,16 @@
 
                 this.population.CalculateFitness();
 
-                Console.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest}");
+                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest}");
             }
 
-            Console.WriteLine($"Solution found in generation {generationCount}");
-            Console.WriteLine($"Fitness: {this.population.GetFittest().Fitness}");
-            Console.WriteLine("Genes: ");
+            this.writer.WriteLine($"Solution found in generation {generationCount}");
+            this.writer.WriteLine($"Fitness: {this.population.GetFittest().Fitness}");
+            this.writer.WriteLine("Genes: ");
 
             for (int i = 0; i < population.GeneLength; i++)
             {
-                Console.Write(this.population.GetFittest().Genes[i]);
+                this.writer.Write(this.population.GetFittest().Genes[i].ToString());
             }
         }
 
@@ -69,7 +74,7 @@
             this.population.Individuals[leastFittestIndex] = this.GetFittestOffspring();
         }
 
-        private Individual GetFittestOffspring()
+        private IIndividual GetFittestOffspring()
         {
             if (this.Fittest.Fitness > this.SecondFittest.Fitness)
             {

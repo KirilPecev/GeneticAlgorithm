@@ -1,19 +1,26 @@
 ﻿namespace GeneticAlgorithm
 {
-    public class Population
-    {
-        private readonly int PopulationSize;
+    using GeneticAlgorithm.Core.IO.Contracts;
+    using GeneticAlgorithm.Entities.Contracts;
 
-        public Population(int populationSize, int geneLength)
+    public class Population : IPopulation
+    {
+        private readonly IReader reader;
+        private readonly IWriter writer;
+
+        public Population(IReader reader, IWriter writer)
         {
-            this.PopulationSize = populationSize;
-            this.GeneLength = geneLength;
+            this.reader = reader;
+            this.writer = writer;
             this.Fittest = 0;
 
+            this.GetPopulationAndGeneLength();
             this.Individuals = new Individual[PopulationSize];
         }
 
-        public Individual[] Individuals { get; set; }
+        public int PopulationSize { get; set; }
+
+        public IIndividual[] Individuals { get; set; }
 
         public int Fittest { get; private set; }
 
@@ -27,7 +34,7 @@
             }
         }
 
-        public Individual GetFittest()
+        public IIndividual GetFittest()
         {
             int maxFit = int.MinValue;
             int maxFitIndex = 0;
@@ -46,7 +53,7 @@
             return Individuals[maxFitIndex];
         }
 
-        public Individual GetSecondFittest()
+        public IIndividual GetSecondFittest()
         {
             int currentIndex = 0;
             int maxFitIndex = 0;
@@ -92,6 +99,15 @@
             }
 
             this.GetFittest();
+        }
+
+        public void GetPopulationAndGeneLength()
+        {
+            this.writer.Write("Please enter population size: ");
+            this.PopulationSize = int.Parse(this.reader.ReadLine());
+
+            this.writer.Write("Please enter length of genes: ");
+            this.GeneLength = int.Parse(this.reader.ReadLine());
         }
     }
 }

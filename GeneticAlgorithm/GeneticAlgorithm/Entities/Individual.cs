@@ -1,8 +1,9 @@
 ﻿namespace GeneticAlgorithm
 {
+    using GeneticAlgorithm.Entities.Contracts;
     using System;
 
-    public class Individual
+    public class Individual : IIndividual
     {
         public Individual(int geneLength)
         {

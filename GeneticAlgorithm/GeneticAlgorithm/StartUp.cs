@@ -1,10 +1,10 @@
 ﻿namespace GeneticAlgorithm
 {
-    using GeneticAlgorithm.Core;
-    using GeneticAlgorithm.Core.Contracts;
-    using GeneticAlgorithm.Core.IO;
-    using GeneticAlgorithm.Core.IO.Contracts;
-    using GeneticAlgorithm.Entities.Contracts;
+    using Core;
+    using Core.Contracts;
+    using Core.IO;
+    using Core.IO.Contracts;
+    using Entities.Contracts;
 
     public class Program
     {

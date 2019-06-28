@@ -1,10 +1,15 @@
 ﻿namespace GeneticAlgorithm
 {
-    using GeneticAlgorithm.Entities.Contracts;
+    using Entities.Contracts;
     using System;
 
     public class Individual : IIndividual
     {
+        public Individual()
+        {
+
+        }
+
         public Individual(int geneLength)
         {
             this.GeneLength = geneLength;
@@ -14,13 +19,13 @@
             this.SetGenesRandomly();
         }
 
-        public int[] Genes { get; private set; }
+        public int[] Genes { get; set; }
 
-        public int GeneLength { get; private set; }
+        public int GeneLength { get; set; }
 
-        public int Fitness { get; private set; }
+        public int Fitness { get; set; }
 
-        private void SetGenesRandomly()
+        public void SetGenesRandomly()
         {
             Random rn = new Random();
 

@@ -1,7 +1,7 @@
 ﻿namespace GeneticAlgorithm
 {
-    using GeneticAlgorithm.Core.IO.Contracts;
-    using GeneticAlgorithm.Entities.Contracts;
+    using Core.IO.Contracts;
+    using Entities.Contracts;
 
     public class Population : IPopulation
     {
@@ -16,6 +16,8 @@
 
             this.GetPopulationAndGeneLength();
             this.Individuals = new Individual[PopulationSize];
+            this.InitializePopulation();
+            this.CalculateFitness();
         }
 
         public int PopulationSize { get; set; }
@@ -101,7 +103,7 @@
             this.GetFittest();
         }
 
-        public void GetPopulationAndGeneLength()
+        private void GetPopulationAndGeneLength()
         {
             this.writer.Write("Please enter population size: ");
             this.PopulationSize = int.Parse(this.reader.ReadLine());

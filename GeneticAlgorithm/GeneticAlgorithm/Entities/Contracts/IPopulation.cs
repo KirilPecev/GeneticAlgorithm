@@ -6,6 +6,8 @@
 
         int GeneLength { get; }
 
+        int PopulationSize { get; set; }
+
         IIndividual[] Individuals { get; set; }
 
         void CalculateFitness();

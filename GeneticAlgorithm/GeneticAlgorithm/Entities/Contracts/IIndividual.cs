@@ -9,5 +9,7 @@
         int[] Genes { get; }
 
         void CalculateFitness();
+
+        void SetGenesRandomly();
     }
 }

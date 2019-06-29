@@ -78,7 +78,7 @@
 
         private string GetGenes(int[] genes)
         {
-            return string.Join("", genes);
+            return string.Join(GlobalConstants.JoinSeparator, genes);
         }
 
         public void AddFittestOffspring()

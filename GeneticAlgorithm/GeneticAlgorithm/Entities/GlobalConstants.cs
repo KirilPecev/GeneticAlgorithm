@@ -4,6 +4,8 @@
     {
         public static readonly string Dashes = new string('-', 80);
 
-        public static readonly int MaxGenerationCount = 1000;
+        public const int MaxGenerationCount = 1000;
+
+        public static readonly string JoinSeparator = string.Empty;
     }
 }

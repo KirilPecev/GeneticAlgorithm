@@ -7,5 +7,7 @@
         public const int MaxGenerationCount = 1000;
 
         public static readonly string JoinSeparator = string.Empty;
+
+        public const int ProbabilityNumber = 7;
     }
 }

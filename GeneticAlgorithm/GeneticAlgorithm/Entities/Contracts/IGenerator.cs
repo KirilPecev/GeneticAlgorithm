@@ -14,8 +14,8 @@
 
         void Selection();
 
-        IIndividual GetFittestOffspring();
+        IIndividual GetFittestFromOffspring();
 
-        void AddFittestOffspring();
+        void ReplaceLeastFittestFromOffspring();
     }
 }

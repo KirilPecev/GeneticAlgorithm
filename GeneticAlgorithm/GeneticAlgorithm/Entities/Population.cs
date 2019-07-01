@@ -12,7 +12,7 @@
         {
             this.reader = reader;
             this.writer = writer;
-            this.Fittest = 0;
+            this.FittestIndividual = 0;
 
             this.GetPopulationAndGeneLength();
             this.Individuals = new Individual[PopulationSize];
@@ -20,11 +20,11 @@
             this.CalculateFitness();
         }
 
-        public int PopulationSize { get; set; }
+        public int PopulationSize { get; private set; }
 
-        public IIndividual[] Individuals { get; set; }
+        public IIndividual[] Individuals { get; private set; }
 
-        public int Fittest { get; private set; }
+        public int FittestIndividual { get; private set; }
 
         public int GeneLength { get; private set; }
 
@@ -36,7 +36,7 @@
             }
         }
 
-        public IIndividual GetFittest()
+        public IIndividual GetFittestIndividual()
         {
             int maxFit = int.MinValue;
             int maxFitIndex = 0;
@@ -50,12 +50,12 @@
                 }
             }
 
-            this.Fittest = Individuals[maxFitIndex].Fitness;
+            this.FittestIndividual = Individuals[maxFitIndex].Fitness;
 
             return Individuals[maxFitIndex];
         }
 
-        public IIndividual GetSecondFittest()
+        public IIndividual GetSecondFittestIndividual()
         {
             int currentIndex = 0;
             int maxFitIndex = 0;
@@ -76,7 +76,7 @@
             return Individuals[maxFitIndex];
         }
 
-        public int GetLeastFittestIndex()
+        public int GetIndexOfWeakestIndividual()
         {
             int minFitVal = int.MaxValue;
             int minFitIndex = 0;
@@ -100,16 +100,28 @@
                 this.Individuals[i].CalculateFitness();
             }
 
-            this.GetFittest();
+            this.GetFittestIndividual();
         }
 
         private void GetPopulationAndGeneLength()
         {
-            this.writer.Write("Please enter population size: ");
-            this.PopulationSize = int.Parse(this.reader.ReadLine());
+            int size = 0;
+            int geneLength = 0;
+            while (true)
+            {
+                this.writer.Write("Please enter population size: ");
+                var sizeResult = int.TryParse(this.reader.ReadLine(), result: out size);
 
-            this.writer.Write("Please enter length of genes: ");
-            this.GeneLength = int.Parse(this.reader.ReadLine());
+                this.writer.Write("Please enter length of genes: ");
+                var genesResult = int.TryParse(this.reader.ReadLine(), result: out geneLength);
+
+                if (sizeResult && genesResult)
+                {
+                    this.PopulationSize = size;
+                    this.GeneLength = geneLength;
+                    break;
+                }
+            }
         }
     }
 }

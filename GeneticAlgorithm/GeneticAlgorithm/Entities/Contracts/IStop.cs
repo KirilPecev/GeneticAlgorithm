@@ -2,9 +2,9 @@
 {
     public interface IStop
     {
-        IIndividual FittestForAllTime { get; set; }
+        IIndividual FittestIndividualForAllTime { get; }
 
-        int BestGeneration { get; set; }
+        int BestGeneration { get; }
 
         void Stop(int generationCount);
     }

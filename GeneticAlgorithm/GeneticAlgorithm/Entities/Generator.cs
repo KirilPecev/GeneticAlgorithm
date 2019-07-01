@@ -16,26 +16,26 @@
             this.population = population;
             this.writer = writer;
 
-            this.Fittest = new Individual(this.population.GeneLength);
-            this.SecondFittest = new Individual(this.population.GeneLength);
-            this.FittestForAllTime = new Individual(this.population.GeneLength);
+            this.FittestIndividual = new Individual(this.population.GeneLength);
+            this.SecondFittestIndividual = new Individual(this.population.GeneLength);
+            this.FittestIndividualForAllTime = new Individual(this.population.GeneLength);
         }
 
-        public IIndividual Fittest { get; private set; }
+        public IIndividual FittestIndividual { get; private set; }
 
-        public IIndividual SecondFittest { get; private set; }
+        public IIndividual SecondFittestIndividual { get; private set; }
 
-        public IIndividual FittestForAllTime { get; set; }
+        public IIndividual FittestIndividualForAllTime { get; private set; }
 
-        public int BestGeneration { get; set; }
+        public int BestGeneration { get; private set; }
 
         public void Generate()
         {
             int generationCount = 0;
 
-            this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest}");
+            this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual}");
 
-            while (this.population.Fittest < this.population.GeneLength)
+            while (this.population.FittestIndividual < this.population.GeneLength)
             {
                 generationCount++;
 
@@ -55,8 +55,8 @@
 
                 this.Stop(generationCount);
 
-                string genes = GetGenes(this.population.GetFittest().Genes);
-                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.Fittest} Genes: {genes}");
+                string genes = GetGenes(this.population.GetFittestIndividual().Genes);
+                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
             }
 
             PrintResult(generationCount);
@@ -67,9 +67,9 @@
             this.writer.WriteLine(GlobalConstants.Dashes);
 
             this.writer.WriteLine($"Solution found in generation {generationCount}");
-            this.writer.WriteLine($"Fitness: {this.population.GetFittest().Fitness}");
+            this.writer.WriteLine($"Fitness: {this.population.GetFittestIndividual().Fitness}");
 
-            string fittestGenes = GetGenes(this.population.GetFittest().Genes);
+            string fittestGenes = GetGenes(this.population.GetFittestIndividual().Genes);
             this.writer.WriteLine($"Genes: {fittestGenes}");
 
             this.writer.WriteLine(GlobalConstants.Dashes);
@@ -79,7 +79,9 @@
         {
             Random rn = new Random();
 
-            if (rn.Next() % GlobalConstants.ProbabilityNumber < this.population.GeneLength)
+            int probability = rn.Next() % GlobalConstants.ProbabilityNumber;
+
+            if (probability < this.population.GeneLength)
             {
                 //Mutate the fittests 2 of population
                 Mutation();
@@ -94,30 +96,30 @@
         public void ReplaceLeastFittestFromOffspring()
         {
             //Update fitness values of offspring
-            this.Fittest.CalculateFitness();
-            this.SecondFittest.CalculateFitness();
+            this.FittestIndividual.CalculateFitness();
+            this.SecondFittestIndividual.CalculateFitness();
 
             //Get index of least fit individual
-            int leastFittestIndex = this.population.GetLeastFittestIndex();
+            int indexOfWeakestIndividual = this.population.GetIndexOfWeakestIndividual();
 
             //Replace the weakest individual with fittest of offspring
-            this.population.Individuals[leastFittestIndex] = this.GetFittestFromOffspring();
+            this.population.Individuals[indexOfWeakestIndividual] = this.GetFittestFromOffspring();
         }
 
         public IIndividual GetFittestFromOffspring()
         {
-            if (this.Fittest.Fitness > this.SecondFittest.Fitness)
+            if (this.FittestIndividual.Fitness > this.SecondFittestIndividual.Fitness)
             {
-                return Fittest;
+                return FittestIndividual;
             }
 
-            return this.SecondFittest;
+            return this.SecondFittestIndividual;
         }
 
         public void Selection()
         {
-            this.Fittest = this.population.GetFittest();
-            this.SecondFittest = this.population.GetSecondFittest();
+            this.FittestIndividual = this.population.GetFittestIndividual();
+            this.SecondFittestIndividual = this.population.GetSecondFittestIndividual();
         }
 
         public void Crossover()
@@ -130,9 +132,9 @@
             //Swap values among parents
             for (int i = 0; i < crossOverPoint; i++)
             {
-                int temp = this.Fittest.Genes[i];
-                this.Fittest.Genes[i] = this.SecondFittest.Genes[i];
-                this.SecondFittest.Genes[i] = temp;
+                int temp = this.FittestIndividual.Genes[i];
+                this.FittestIndividual.Genes[i] = this.SecondFittestIndividual.Genes[i];
+                this.SecondFittestIndividual.Genes[i] = temp;
             }
         }
 
@@ -142,10 +144,10 @@
 
             //Select a random mutation point
             int mutationPoint = rn.Next(this.population.Individuals[0].GeneLength);
-            FlipValuesAtRandomMutationPoint(this.Fittest, mutationPoint);
+            FlipValuesAtRandomMutationPoint(this.FittestIndividual, mutationPoint);
 
             mutationPoint = rn.Next(this.population.Individuals[0].GeneLength);
-            FlipValuesAtRandomMutationPoint(this.SecondFittest, mutationPoint);
+            FlipValuesAtRandomMutationPoint(this.SecondFittestIndividual, mutationPoint);
         }
 
         private void FlipValuesAtRandomMutationPoint(IIndividual individual, int mutationPoint)
@@ -162,13 +164,13 @@
 
         public void Stop(int generationCount)
         {
-            if (this.FittestForAllTime.Fitness <= this.Fittest.Fitness)
+            if (this.FittestIndividualForAllTime.Fitness <= this.FittestIndividual.Fitness)
             {
-                this.FittestForAllTime = new Individual
+                this.FittestIndividualForAllTime = new Individual
                 {
-                    GeneLength = this.Fittest.GeneLength,
-                    Genes = this.Fittest.Genes.ToArray(),
-                    Fitness = this.Fittest.Fitness
+                    GeneLength = this.FittestIndividual.GeneLength,
+                    Genes = this.FittestIndividual.Genes.ToArray(),
+                    Fitness = this.FittestIndividual.Fitness
                 };
 
                 this.BestGeneration = generationCount;
@@ -183,9 +185,9 @@
             {
                 this.writer.WriteLine(GlobalConstants.Dashes);
                 this.writer.WriteLine($"The best solution is found in generation {this.BestGeneration}");
-                this.writer.WriteLine($"Fitness: {this.FittestForAllTime.Fitness}");
+                this.writer.WriteLine($"Fitness: {this.FittestIndividualForAllTime.Fitness}");
 
-                string genesOfFittestForAllTime = GetGenes(this.FittestForAllTime.Genes);
+                string genesOfFittestForAllTime = GetGenes(this.FittestIndividualForAllTime.Genes);
                 this.writer.WriteLine($"Genes: {genesOfFittestForAllTime}");
                 this.writer.WriteLine(GlobalConstants.Dashes);
 

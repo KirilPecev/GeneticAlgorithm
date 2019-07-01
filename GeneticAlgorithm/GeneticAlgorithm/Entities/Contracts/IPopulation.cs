@@ -2,21 +2,21 @@
 {
     public interface IPopulation
     {
-        int Fittest { get; }
+        int FittestIndividual { get; }
 
         int GeneLength { get; }
 
-        int PopulationSize { get; set; }
+        int PopulationSize { get;}
 
-        IIndividual[] Individuals { get; set; }
+        IIndividual[] Individuals { get; }
 
         void CalculateFitness();
 
-        IIndividual GetFittest();
+        IIndividual GetFittestIndividual();
 
-        int GetLeastFittestIndex();
+        int GetIndexOfWeakestIndividual();
 
-        IIndividual GetSecondFittest();
+        IIndividual GetSecondFittestIndividual();
 
         void InitializePopulation();
     }

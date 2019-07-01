@@ -2,9 +2,9 @@
 {
     public interface IGenerator
     {
-        IIndividual Fittest { get; }
+        IIndividual FittestIndividual { get; }
 
-        IIndividual SecondFittest { get; }
+        IIndividual SecondFittestIndividual { get; }
 
         void Generate();
 

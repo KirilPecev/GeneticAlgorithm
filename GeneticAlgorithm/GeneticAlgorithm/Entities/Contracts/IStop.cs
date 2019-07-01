@@ -6,6 +6,6 @@
 
         int BestGeneration { get; }
 
-        void Stop(int generationCount);
+        void CreateTheFittestForAllTimeIndividual(int generationCount);
     }
 }

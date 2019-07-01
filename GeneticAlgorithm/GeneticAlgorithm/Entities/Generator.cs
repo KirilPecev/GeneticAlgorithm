@@ -1,13 +1,18 @@
 ﻿namespace GeneticAlgorithm
 {
     using Core.IO.Contracts;
-    using Entities;
     using Entities.Contracts;
     using System;
     using System.Linq;
 
     public class Generator : IGenerator, IStop
     {
+        private const int MaxGenerationCount = 1000;
+        private const int ProbabilityNumber = 7;
+
+        private readonly string Dashes = new string('-', 80);
+        private readonly string JoinSeparator = string.Empty;
+
         private readonly IPopulation population;
         private readonly IWriter writer;
 
@@ -48,12 +53,18 @@
                 //Do mutation under a some probability
                 MutateUnderSomeProbability();
 
+                //Update fitness values of offspring
+                UpdateFitnesValuesFromOffspring();
+
                 //Replace least fittest from offspring
                 this.ReplaceLeastFittestFromOffspring();
 
                 this.population.CalculateFitness();
 
-                this.Stop(generationCount);
+                CreateTheFittestForAllTimeIndividual(generationCount);
+
+                //Print the best find result if generationCount is more or equal to MaxGenerationCount
+                PrintTheBestFindResult(generationCount);
 
                 string genes = GetGenes(this.population.GetFittestIndividual().Genes);
                 this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
@@ -64,7 +75,7 @@
 
         private void PrintResult(int generationCount)
         {
-            this.writer.WriteLine(GlobalConstants.Dashes);
+            this.writer.WriteLine(Dashes);
 
             this.writer.WriteLine($"Solution found in generation {generationCount}");
             this.writer.WriteLine($"Fitness: {this.population.GetFittestIndividual().Fitness}");
@@ -72,14 +83,12 @@
             string fittestGenes = GetGenes(this.population.GetFittestIndividual().Genes);
             this.writer.WriteLine($"Genes: {fittestGenes}");
 
-            this.writer.WriteLine(GlobalConstants.Dashes);
+            this.writer.WriteLine(Dashes);
         }
 
         private void MutateUnderSomeProbability()
         {
-            Random rn = new Random();
-
-            int probability = rn.Next() % GlobalConstants.ProbabilityNumber;
+            int probability = GetRandomProbability();
 
             if (probability < this.population.GeneLength)
             {
@@ -88,22 +97,30 @@
             }
         }
 
+        private static int GetRandomProbability()
+        {
+            Random rn = new Random();
+            return rn.Next() % ProbabilityNumber;
+        }
+
         private string GetGenes(int[] genes)
         {
-            return string.Join(GlobalConstants.JoinSeparator, genes);
+            return string.Join(JoinSeparator, genes);
         }
 
         public void ReplaceLeastFittestFromOffspring()
-        {
-            //Update fitness values of offspring
-            this.FittestIndividual.CalculateFitness();
-            this.SecondFittestIndividual.CalculateFitness();
-
-            //Get index of least fit individual
+        {          
+            //Get index of weakest individual
             int indexOfWeakestIndividual = this.population.GetIndexOfWeakestIndividual();
 
-            //Replace the weakest individual with fittest of offspring
+            //Replace the weakest individual with fittest from offspring
             this.population.Individuals[indexOfWeakestIndividual] = this.GetFittestFromOffspring();
+        }
+
+        private void UpdateFitnesValuesFromOffspring()
+        {
+            this.FittestIndividual.CalculateFitness();
+            this.SecondFittestIndividual.CalculateFitness();
         }
 
         public IIndividual GetFittestFromOffspring()
@@ -124,13 +141,16 @@
 
         public void Crossover()
         {
-            Random rn = new Random();
-
             //Select a random crossover point
-            int crossOverPoint = rn.Next(population.Individuals[0].GeneLength);
+            int crossoverPoint = GetRandomPoint();
 
             //Swap values among parents
-            for (int i = 0; i < crossOverPoint; i++)
+            SwapValuesAmongParents(crossoverPoint);
+        }
+
+        private void SwapValuesAmongParents(int crossoverPoint)
+        {
+            for (int i = 0; i < crossoverPoint; i++)
             {
                 int temp = this.FittestIndividual.Genes[i];
                 this.FittestIndividual.Genes[i] = this.SecondFittestIndividual.Genes[i];
@@ -138,19 +158,24 @@
             }
         }
 
-        public void Mutation()
+        private int GetRandomPoint()
         {
             Random rn = new Random();
 
-            //Select a random mutation point
-            int mutationPoint = rn.Next(this.population.Individuals[0].GeneLength);
-            FlipValuesAtRandomMutationPoint(this.FittestIndividual, mutationPoint);
-
-            mutationPoint = rn.Next(this.population.Individuals[0].GeneLength);
-            FlipValuesAtRandomMutationPoint(this.SecondFittestIndividual, mutationPoint);
+            return rn.Next(population.Individuals[0].GeneLength);
         }
 
-        private void FlipValuesAtRandomMutationPoint(IIndividual individual, int mutationPoint)
+        public void Mutation()
+        {
+            //Select a random mutation point
+            int mutationPoint = GetRandomPoint();
+            FlipValues(this.FittestIndividual, mutationPoint);
+
+            mutationPoint = GetRandomPoint();
+            FlipValues(this.SecondFittestIndividual, mutationPoint);
+        }
+
+        private void FlipValues(IIndividual individual, int mutationPoint)
         {
             if (individual.Genes[mutationPoint] == 0)
             {
@@ -162,7 +187,7 @@
             }
         }
 
-        public void Stop(int generationCount)
+        public void CreateTheFittestForAllTimeIndividual(int generationCount)
         {
             if (this.FittestIndividualForAllTime.Fitness <= this.FittestIndividual.Fitness)
             {
@@ -175,21 +200,19 @@
 
                 this.BestGeneration = generationCount;
             }
-
-            PrintTheBestFindResult(generationCount);
         }
 
         private void PrintTheBestFindResult(int generationCount)
         {
-            if (generationCount >= GlobalConstants.MaxGenerationCount)
+            if (generationCount >= MaxGenerationCount)
             {
-                this.writer.WriteLine(GlobalConstants.Dashes);
+                this.writer.WriteLine(Dashes);
                 this.writer.WriteLine($"The best solution is found in generation {this.BestGeneration}");
                 this.writer.WriteLine($"Fitness: {this.FittestIndividualForAllTime.Fitness}");
 
                 string genesOfFittestForAllTime = GetGenes(this.FittestIndividualForAllTime.Genes);
                 this.writer.WriteLine($"Genes: {genesOfFittestForAllTime}");
-                this.writer.WriteLine(GlobalConstants.Dashes);
+                this.writer.WriteLine(Dashes);
 
                 Environment.Exit(0);
             }

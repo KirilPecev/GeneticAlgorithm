@@ -5,10 +5,7 @@
 
     public class Individual : IIndividual
     {
-        public Individual()
-        {
-
-        }
+        public Individual() { }
 
         public Individual(int geneLength)
         {
@@ -16,7 +13,7 @@
             this.Fitness = 0;
             this.Genes = new int[GeneLength];
 
-            this.SetGenesRandomly();
+            this.SetGenes();
         }
 
         public int[] Genes { get; set; }
@@ -25,14 +22,18 @@
 
         public int Fitness { get; set; }
 
-        public void SetGenesRandomly()
+        public void SetGenes()
         {
-            Random rn = new Random();
-
             for (int i = 0; i < GeneLength; i++)
             {
-                this.Genes[i] = Math.Abs(rn.Next() % 2);
+                this.Genes[i] = GetGene();
             }
+        }
+
+        private static int GetGene()
+        {
+            Random rn = new Random();
+            return Math.Abs(rn.Next() % 2);
         }
 
         public void CalculateFitness()

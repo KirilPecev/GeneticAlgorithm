@@ -10,6 +10,6 @@
 
         void CalculateFitness();
 
-        void SetGenesRandomly();
+        void SetGenes();
     }
 }

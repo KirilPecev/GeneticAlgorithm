@@ -61,13 +61,13 @@
 
                 this.population.CalculateFitness();
 
+                string genes = GetGenes(this.population.GetFittestIndividual().Genes);
+                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
+
                 CreateTheFittestForAllTimeIndividual(generationCount);
 
                 //Print the best find result if generationCount is more or equal to MaxGenerationCount
-                PrintTheBestFindResult(generationCount);
-
-                string genes = GetGenes(this.population.GetFittestIndividual().Genes);
-                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
+                PrintTheBestFindResult(generationCount);             
             }
 
             PrintResult(generationCount);
@@ -204,7 +204,7 @@
 
         private void PrintTheBestFindResult(int generationCount)
         {
-            if (generationCount >= MaxGenerationCount)
+            if (generationCount == MaxGenerationCount)
             {
                 this.writer.WriteLine(Dashes);
                 this.writer.WriteLine($"The best solution is found in generation {this.BestGeneration}");

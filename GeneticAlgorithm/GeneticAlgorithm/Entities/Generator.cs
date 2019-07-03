@@ -36,6 +36,7 @@
 
         public void Generate()
         {
+            bool isStopped = false;
             int generationCount = 0;
 
             this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual}");
@@ -66,25 +67,28 @@
 
                 CreateTheFittestForAllTimeIndividual(generationCount);
 
-                //Print the best find result if generationCount is more or equal to MaxGenerationCount
-                PrintTheBestFindResult(generationCount);             
+                //Check that generationCount is equal to MaxGenerationCount
+                isStopped = CheckForStop(generationCount);
+
+                if (isStopped)
+                {
+                    break;
+                }
             }
 
-            PrintResult(generationCount);
+            PrintResult(generationCount, isStopped);
         }
 
-        private void PrintResult(int generationCount)
+        public bool CheckForStop(int generationCount)
         {
-            this.writer.WriteLine(Dashes);
+            if (generationCount == MaxGenerationCount)
+            {
+                return true;
+            }
 
-            this.writer.WriteLine($"Solution found in generation {generationCount}");
-            this.writer.WriteLine($"Fitness: {this.population.GetFittestIndividual().Fitness}");
-
-            string fittestGenes = GetGenes(this.population.GetFittestIndividual().Genes);
-            this.writer.WriteLine($"Genes: {fittestGenes}");
-
-            this.writer.WriteLine(Dashes);
+            return false;
         }
+
 
         private void MutateUnderSomeProbability()
         {
@@ -109,7 +113,7 @@
         }
 
         public void ReplaceLeastFittestFromOffspring()
-        {          
+        {
             //Get index of weakest individual
             int indexOfWeakestIndividual = this.population.GetIndexOfWeakestIndividual();
 
@@ -202,20 +206,31 @@
             }
         }
 
-        private void PrintTheBestFindResult(int generationCount)
+        private void PrintResult(int generationCount, bool isStopped)
         {
-            if (generationCount == MaxGenerationCount)
+            if (isStopped)
             {
-                this.writer.WriteLine(Dashes);
-                this.writer.WriteLine($"The best solution is found in generation {this.BestGeneration}");
-                this.writer.WriteLine($"Fitness: {this.FittestIndividualForAllTime.Fitness}");
-
-                string genesOfFittestForAllTime = GetGenes(this.FittestIndividualForAllTime.Genes);
-                this.writer.WriteLine($"Genes: {genesOfFittestForAllTime}");
-                this.writer.WriteLine(Dashes);
-
-                Environment.Exit(0);
+                PrintTheBestFindResult();
+                return;
             }
+
+            this.writer.WriteLine(Dashes);
+            this.writer.WriteLine($"Solution found in generation {generationCount}");
+            this.writer.WriteLine($"Fitness: {this.population.GetFittestIndividual().Fitness}");
+            string fittestGenes = GetGenes(this.population.GetFittestIndividual().Genes);
+            this.writer.WriteLine($"Genes: {fittestGenes}");
+            this.writer.WriteLine(Dashes);
+        }
+
+        private void PrintTheBestFindResult()
+        {
+            this.writer.WriteLine(Dashes);
+            this.writer.WriteLine($"The best solution is found in generation {this.BestGeneration}");
+            this.writer.WriteLine($"Fitness: {this.FittestIndividualForAllTime.Fitness}");
+
+            string genesOfFittestForAllTime = GetGenes(this.FittestIndividualForAllTime.Genes);
+            this.writer.WriteLine($"Genes: {genesOfFittestForAllTime}");
+            this.writer.WriteLine(Dashes);
         }
     }
 }

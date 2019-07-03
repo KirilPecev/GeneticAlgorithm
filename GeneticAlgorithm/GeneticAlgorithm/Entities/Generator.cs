@@ -55,18 +55,19 @@
                 //Update fitness values of offspring
                 UpdateFitnessValuesFromOffspring();
 
-                //Replace least fittest from offspring
+                //Replace weakest individual from population with fittest from offspring
                 this.ReplaceLeastFittestFromOffspring();
 
                 //Calculate fitness foreach individual in population
                 this.population.CalculateFitness();
 
+                //Print the current generation with his fittest individual and his genes
                 string genes = GetGenes(this.population.GetFittestIndividual().Genes);
                 this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
 
                 CreateTheFittestForAllTimeIndividual(generationCount);
 
-                //Check that generationCount is equal to MaxGenerationCount
+                //Check that if generationCount is equal to MaxGenerationCount
                 isStopped = CheckForStop(generationCount);
 
                 if (isStopped)

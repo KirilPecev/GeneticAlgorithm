@@ -43,6 +43,7 @@
             {
                 if (this.Genes[i] == 1)
                 {
+                    //The fitness is incemented by one
                     this.Fitness++;
                 }
             }

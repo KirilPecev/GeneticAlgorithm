@@ -39,13 +39,11 @@
             bool isStopped = false;
             int generationCount = 0;
 
-            this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual}");
-
             while (this.population.FittestIndividual < this.population.GeneLength)
             {
                 generationCount++;
 
-                //Get the fittests 2 from population
+                //Get the fittests 2 individuals from population
                 this.Selection();
 
                 //Crossover among parents 
@@ -55,11 +53,12 @@
                 MutateUnderSomeProbability();
 
                 //Update fitness values of offspring
-                UpdateFitnesValuesFromOffspring();
+                UpdateFitnessValuesFromOffspring();
 
                 //Replace least fittest from offspring
                 this.ReplaceLeastFittestFromOffspring();
 
+                //Calculate fitness foreach individual in population
                 this.population.CalculateFitness();
 
                 string genes = GetGenes(this.population.GetFittestIndividual().Genes);
@@ -121,7 +120,7 @@
             this.population.Individuals[indexOfWeakestIndividual] = this.GetFittestFromOffspring();
         }
 
-        private void UpdateFitnesValuesFromOffspring()
+        private void UpdateFitnessValuesFromOffspring()
         {
             this.FittestIndividual.CalculateFitness();
             this.SecondFittestIndividual.CalculateFitness();

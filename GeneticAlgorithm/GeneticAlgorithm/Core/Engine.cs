@@ -1,8 +1,8 @@
-﻿using GeneticAlgorithm.Core.Contracts;
-using GeneticAlgorithm.Entities.Contracts;
-
-namespace GeneticAlgorithm.Core
+﻿namespace GeneticAlgorithm.Core
 {
+    using Contracts;
+    using Entities.Contracts;
+
     public class Engine : IEngine
     {
         private readonly IGenerator generator;

@@ -1,6 +1,6 @@
 ﻿namespace GeneticAlgorithm.Entities.Contracts
 {
-    public interface IPopulation
+    public interface IPopulation<T>
     {
         int FittestIndividual { get; }
 
@@ -8,15 +8,15 @@
 
         int PopulationSize { get;}
 
-        IIndividual[] Individuals { get; }
+        IIndividual<T>[] Individuals { get; }
 
         void CalculateFitness();
 
-        IIndividual GetFittestIndividual();
+        IIndividual<T> GetFittestIndividual();
 
         int GetIndexOfWeakestIndividual();
 
-        IIndividual GetSecondFittestIndividual();
+        IIndividual<T> GetSecondFittestIndividual();
 
         void InitializePopulation();
     }

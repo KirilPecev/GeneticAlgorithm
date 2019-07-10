@@ -1,11 +1,11 @@
-﻿namespace GeneticAlgorithm
+﻿namespace GeneticAlgorithm.Entities.ZerosAndOnesImplementation
 {
     using Core.IO.Contracts;
     using Entities.Contracts;
     using System;
     using System.Linq;
 
-    public class Generator : IGenerator, IStop
+    public class Generator : IGenerator<int>, IStop<int>
     {
         private const int MaxGenerationCount = 1000;
         private const int ProbabilityNumber = 7;
@@ -13,10 +13,10 @@
         private readonly string Dashes = new string('-', 80);
         private readonly string JoinSeparator = string.Empty;
 
-        private readonly IPopulation population;
+        private readonly IPopulation<int> population;
         private readonly IWriter writer;
 
-        public Generator(IPopulation population, IWriter writer)
+        public Generator(IPopulation<int> population, IWriter writer)
         {
             this.population = population;
             this.writer = writer;
@@ -26,11 +26,11 @@
             this.FittestIndividualForAllTime = new Individual(this.population.GeneLength);
         }
 
-        public IIndividual FittestIndividual { get; private set; }
+        public IIndividual<int> FittestIndividual { get; private set; }
 
-        public IIndividual SecondFittestIndividual { get; private set; }
+        public IIndividual<int> SecondFittestIndividual { get; private set; }
 
-        public IIndividual FittestIndividualForAllTime { get; private set; }
+        public IIndividual<int> FittestIndividualForAllTime { get; private set; }
 
         public int BestGeneration { get; private set; }
 
@@ -127,7 +127,7 @@
             this.SecondFittestIndividual.CalculateFitness();
         }
 
-        public IIndividual GetFittestFromOffspring()
+        public IIndividual<int> GetFittestFromOffspring()
         {
             if (this.FittestIndividual.Fitness > this.SecondFittestIndividual.Fitness)
             {
@@ -179,7 +179,7 @@
             FlipValues(this.SecondFittestIndividual, mutationPoint);
         }
 
-        private void FlipValues(IIndividual individual, int mutationPoint)
+        private void FlipValues(IIndividual<int> individual, int mutationPoint)
         {
             if (individual.Genes[mutationPoint] == 0)
             {

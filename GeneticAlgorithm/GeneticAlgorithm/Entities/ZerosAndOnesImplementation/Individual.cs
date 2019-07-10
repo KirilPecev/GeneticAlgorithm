@@ -1,9 +1,9 @@
-﻿namespace GeneticAlgorithm
+﻿namespace GeneticAlgorithm.Entities.ZerosAndOnesImplementation
 {
     using Entities.Contracts;
     using System;
 
-    public class Individual : IIndividual
+    public class Individual : IIndividual<int>
     {
         public Individual() { }
 
@@ -11,7 +11,7 @@
         {
             this.GeneLength = geneLength;
             this.Fitness = 0;
-            this.Genes = new int[GeneLength];
+            this.Genes = new int[this.GeneLength];
 
             this.SetGenes();
         }
@@ -24,13 +24,13 @@
 
         public void SetGenes()
         {
-            for (int i = 0; i < GeneLength; i++)
+            for (int i = 0; i < this.GeneLength; i++)
             {
                 this.Genes[i] = GetGene();
             }
         }
 
-        private static int GetGene()
+        private int GetGene()
         {
             Random rn = new Random();
             return Math.Abs(rn.Next() % 2);

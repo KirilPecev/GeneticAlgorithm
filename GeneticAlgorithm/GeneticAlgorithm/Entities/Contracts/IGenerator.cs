@@ -1,10 +1,10 @@
 ﻿namespace GeneticAlgorithm.Entities.Contracts
 {
-    public interface IGenerator
+    public interface IGenerator<T>
     {
-        IIndividual FittestIndividual { get; }
+        IIndividual<T> FittestIndividual { get; }
 
-        IIndividual SecondFittestIndividual { get; }
+        IIndividual<T> SecondFittestIndividual { get; }
 
         void Generate();
 
@@ -14,7 +14,7 @@
 
         void Selection();
 
-        IIndividual GetFittestFromOffspring();
+        IIndividual<T> GetFittestFromOffspring();
 
         void ReplaceLeastFittestFromOffspring();
     }

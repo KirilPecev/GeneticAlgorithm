@@ -1,8 +1,8 @@
 ﻿namespace GeneticAlgorithm.Entities.Contracts
 {
-    public interface IStop
+    public interface IStop<T>
     {
-        IIndividual FittestIndividualForAllTime { get; }
+        IIndividual<T> FittestIndividualForAllTime { get; }
 
         int BestGeneration { get; }
 

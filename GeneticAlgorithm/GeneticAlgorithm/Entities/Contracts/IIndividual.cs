@@ -1,12 +1,12 @@
 ﻿namespace GeneticAlgorithm.Entities.Contracts
 {
-    public interface IIndividual
+    public interface IIndividual<T>
     {
         int Fitness { get; }
 
         int GeneLength { get; }
 
-        int[] Genes { get; }
+        T[] Genes { get; }
 
         void CalculateFitness();
 

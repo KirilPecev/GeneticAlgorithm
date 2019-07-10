@@ -5,9 +5,9 @@
 
     public class Engine : IEngine
     {
-        private readonly IGenerator generator;
+        private readonly IGenerator<int> generator;
 
-        public Engine(IGenerator generator)
+        public Engine(IGenerator<int> generator)
         {
             this.generator = generator;
         }

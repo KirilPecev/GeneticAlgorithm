@@ -1,183 +1,237 @@
-﻿//namespace GeneticAlgorithm.Entities.StringImplementation
-//{
-//    using GeneticAlgorithm.Entities.Contracts;
-//    using System;
+﻿namespace GeneticAlgorithm.Entities.StringImplementation
+{
+    using Core.IO.Contracts;
+    using Entities.Contracts;
+    using System;
 
-//    public class Generator : IGenerator<int>
-//    {
-//        private readonly Population population;
+    public class Generator : IGenerator<char>, IStop<char>
+    {
+        private const int MaxGenerationCount = 1000;
+        private const int ProbabilityNumber = 7;
 
-//        public Generator(Population population)
-//        {
-//            this.population = population;
-//        }
+        private readonly string Dashes = new string('-', 80);
+        private readonly string JoinSeparator = string.Empty;
 
-//        public Individual Fittest { get; private set; }
+        private readonly IPopulation<char> population;
+        private readonly IWriter writer;
 
-//        public Individual SecondFittest { get; private set; }
+        public Generator(Population population)
+        {
+            this.population = population;
+        }
 
-//        public IIndividual<int> FittestIndividual => throw new NotImplementedException();
+        public IIndividual<char> FittestIndividual { get; private set; }
 
-//        public IIndividual<int> SecondFittestIndividual => throw new NotImplementedException();
+        public IIndividual<char> SecondFittestIndividual { get; private set; }
 
-//        public void Generate()
-//        {
-//            Random rn = new Random();
+        public IIndividual<char> FittestIndividualForAllTime { get; private set; }
 
-//            population.InitializePopulation();
-//            population.CalculateFitness();
+        public int BestGeneration { get; private set; }
 
-//            int generationCount = 0;
+        public void Generate()
+        {
+            bool isStopped = false;
+            int generationCount = 0;
 
-//            Console.WriteLine($"Generation: {generationCount} Fittest: {population.Fittest}");
+            while (this.population.FittestIndividual < this.population.GeneLength)
+            {
+                generationCount++;
 
-//            bool found = false;
+                //Get the fittests 2 individuals from population
+                this.Selection();
 
-//            while (!found)
-//            {
-//                generationCount++;
+                //Crossover among parents 
+                this.Crossover();
 
-//                Selection();
+                //Do mutation under a some probability
+                MutateUnderSomeProbability();
 
-//                Crossover();
+                //Update fitness values of offspring
+                UpdateFitnessValuesFromOffspring();
 
-//                //Do mutation under a random probability
-//                if (rn.Next() % 7 < 100)
-//                {
-//                    Mutation();
-//                }
+                //Replace weakest individual from population with fittest from offspring
+                this.ReplaceLeastFittestFromOffspring();
 
-//                AddFittestOffspring();
+                //Calculate fitness foreach individual in population
+                this.population.CalculateFitness();
 
-//                population.CalculateFitness();
+                //Print the current generation with his fittest individual and his genes
+                string genes = GetGenes(this.population.GetFittestIndividual().Genes);
+                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
 
-//                //if (Fittest.Genes == Fittest.Choromosome)
-//                //{
-//                //    found = true;
-//                //}
+                CreateTheFittestForAllTimeIndividual(generationCount);
 
-//                Console.WriteLine($"Generation: {generationCount} Fittest: {population.Fittest} Genes: {Fittest.Genes}");
-//            }
+                //Check that if generationCount is equal to MaxGenerationCount
+                isStopped = CheckForStop(generationCount);
 
-//            Console.WriteLine($"Solution found in generation {generationCount}");
-//            Console.WriteLine($"Fitness: {population.GetFittest().Fitness}");
-//            Console.WriteLine("Genes: ");
+                if (isStopped)
+                {
+                    break;
+                }
+            }
 
-//            for (int i = 0; i < population.Chromosome.Length; i++)
-//            {
-//                Console.Write(Fittest.Genes[i]);
-//            }
-//        }
+            PrintResult(generationCount, isStopped);
+        }
 
-//        private void AddFittestOffspring()
-//        {
-//            //Update fitness values of offspring
-//            Fittest.CalculateFitness();
-//            SecondFittest.CalculateFitness();
+        public bool CheckForStop(int generationCount)
+        {
+            if (generationCount == MaxGenerationCount)
+            {
+                return true;
+            }
 
-//            //Get index of least fit individual
-//            int leastFittestIndex = population.GetLeastFittestIndex();
+            return false;
+        }
 
-//            //Replace least fittest individual from most fittest offspring
-//            population.Individuals[leastFittestIndex] = GetFittestOffspring();
-//        }
+        private void MutateUnderSomeProbability()
+        {
+            int probability = GetRandomProbability();
 
-//        private Individual GetFittestOffspring()
-//        {
-//            if (Fittest.Fitness > SecondFittest.Fitness)
-//            {
-//                return Fittest;
-//            }
+            if (probability < this.population.GeneLength)
+            {
+                //Mutate the fittests 2 of population
+                Mutation();
+            }
+        }
 
-//            return SecondFittest;
-//        }
+        private static int GetRandomProbability()
+        {
+            Random rn = new Random();
+            return rn.Next() % ProbabilityNumber;
+        }
 
-//        private void Selection()
-//        {
-//            Fittest = population.GetFittest();
-//            SecondFittest = population.GetSecondFittest();
-//        }
+        private string GetGenes(char[] genes)
+        {
+            return string.Join(JoinSeparator, genes);
+        }
 
-//        private void Crossover()
-//        {
-//            Random rn = new Random();
 
-//            //Select a random crossover point
-//            int crossOverPoint = rn.Next(population.Individuals[0].Choromosome.Length);
+        public void ReplaceLeastFittestFromOffspring()
+        {
+            //Get index of weakest individual
+            int indexOfWeakestIndividual = this.population.GetIndexOfWeakestIndividual();
 
-//            //Swap values among parents
-//            char[] fittestGenes = Fittest.Genes.ToCharArray();
-//            char[] secondFittestGenes = SecondFittest.Genes.ToCharArray();
+            //Replace the weakest individual with fittest from offspring
+            this.population.Individuals[indexOfWeakestIndividual] = this.GetFittestFromOffspring();
+        }
 
-//            for (int i = 0; i < crossOverPoint; i++)
-//            {
-//                char temp = Fittest.Genes[i];
-//                fittestGenes[i] = SecondFittest.Genes[i];
-//                secondFittestGenes[i] = temp;
-//            }
+        private void UpdateFitnessValuesFromOffspring()
+        {
+            this.FittestIndividual.CalculateFitness();
+            this.SecondFittestIndividual.CalculateFitness();
+        }
 
-//            Fittest.Genes = string.Join("", fittestGenes);
-//            SecondFittest.Genes = string.Join("", secondFittestGenes);
-//        }
+        public IIndividual<char> GetFittestFromOffspring()
+        {
+            if (this.FittestIndividual.Fitness > this.SecondFittestIndividual.Fitness)
+            {
+                return FittestIndividual;
+            }
 
-//        private void Mutation()
-//        {
-//            Random rn = new Random();
+            return this.SecondFittestIndividual;
+        }
 
-//            //Select a random mutation point
-//            int mutationPoint = rn.Next(population.Individuals[0].Genes.Length);
+        public void Selection()
+        {
+            this.FittestIndividual = this.population.GetFittestIndividual();
+            this.SecondFittestIndividual = this.population.GetSecondFittestIndividual();
+        }
 
-//            //Flip values at the mutation point
-//            char[] fittestGenes = Fittest.Genes.ToCharArray();
-//            if (fittestGenes[mutationPoint] != Fittest.Choromosome[mutationPoint])
-//            {
-//                fittestGenes[mutationPoint] = Fittest.Choromosome[mutationPoint];
-//            }
-//            else
-//            {
-//                fittestGenes[mutationPoint] = '#';
-//            }
+        public void Crossover()
+        {
+            //Select a random crossover point
+            int crossoverPoint = GetRandomPoint();
 
-//            Fittest.Genes = string.Join("", fittestGenes);
+            //Swap values among parents
+            SwapValuesAmongParents(crossoverPoint);
+        }
 
-//            mutationPoint = rn.Next(population.Individuals[0].Genes.Length);
+        private void SwapValuesAmongParents(int crossoverPoint)
+        {
+            for (int i = 0; i < crossoverPoint; i++)
+            {
+                char temp = this.FittestIndividual.Genes[i];
+                this.FittestIndividual.Genes[i] = this.SecondFittestIndividual.Genes[i];
+                this.SecondFittestIndividual.Genes[i] = temp;
+            }
+        }
 
-//            char[] secondFittestGenes = SecondFittest.Genes.ToCharArray();
-//            if (secondFittestGenes[mutationPoint] != SecondFittest.Choromosome[mutationPoint])
-//            {
-//                secondFittestGenes[mutationPoint] = SecondFittest.Choromosome[mutationPoint];
-//            }
-//            else
-//            {
-//                secondFittestGenes[mutationPoint] = '#';
-//            }
+        private int GetRandomPoint()
+        {
+            Random rn = new Random();
 
-//            SecondFittest.Genes = string.Join("", secondFittestGenes);
-//        }
+            return rn.Next(population.Individuals[0].GeneLength);
+        }
 
-//        void IGenerator<int>.Mutation()
-//        {
-//            throw new NotImplementedException();
-//        }
+        public void Mutation()
+        {
+            //Select a random mutation point
+            int mutationPoint = GetRandomPoint();
+            FlipValues(this.FittestIndividual, mutationPoint);
 
-//        void IGenerator<int>.Crossover()
-//        {
-//            throw new NotImplementedException();
-//        }
+            mutationPoint = GetRandomPoint();
+            FlipValues(this.SecondFittestIndividual, mutationPoint);
+        }
 
-//        void IGenerator<int>.Selection()
-//        {
-//            throw new NotImplementedException();
-//        }
+        private void FlipValues(IIndividual<char> individual, int mutationPoint)
+        {
+            if (individual.Genes[mutationPoint] != this.population.Chromosome[mutationPoint])
+            {
+                individual.Genes[mutationPoint] = this.population.Chromosome[mutationPoint];
+            }
+            else
+            {
+                individual.Genes[mutationPoint] = '#';
+            }
+        }
 
-//        public IIndividual<int> GetFittestFromOffspring()
-//        {
-//            throw new NotImplementedException();
-//        }
+        public void CreateTheFittestForAllTimeIndividual(int generationCount)
+        {
+            if (this.FittestIndividualForAllTime.Fitness <= this.FittestIndividual.Fitness)
+            {
+                this.FittestIndividualForAllTime = new Individual
+                {
+                    GeneLength = this.FittestIndividual.GeneLength,
+                    Genes = GetGenes(FittestIndividual),
+                    Fitness = this.FittestIndividual.Fitness
+                };
 
-//        public void ReplaceLeastFittestFromOffspring()
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+                this.BestGeneration = generationCount;
+            }
+        }
+
+        private char[] GetGenes(IIndividual<char> individual)
+        {
+            char[] array = new char[individual.Genes.Length];
+            Array.Copy(individual.Genes, array, individual.Genes.Length);
+            return array;
+        }
+
+        private void PrintResult(int generationCount, bool isStopped)
+        {
+            if (isStopped)
+            {
+                PrintTheBestFindResult();
+                return;
+            }
+
+            this.writer.WriteLine(Dashes);
+            this.writer.WriteLine($"Solution found in generation {generationCount}");
+            this.writer.WriteLine($"Fitness: {this.population.GetFittestIndividual().Fitness}");
+            string fittestGenes = GetGenes(this.population.GetFittestIndividual().Genes);
+            this.writer.WriteLine($"Genes: {fittestGenes}");
+            this.writer.WriteLine(Dashes);
+        }
+
+        private void PrintTheBestFindResult()
+        {
+            this.writer.WriteLine(Dashes);
+            this.writer.WriteLine($"The best solution is found in generation {this.BestGeneration}");
+            this.writer.WriteLine($"Fitness: {this.FittestIndividualForAllTime.Fitness}");
+
+            string genesOfFittestForAllTime = GetGenes(this.FittestIndividualForAllTime.Genes);
+            this.writer.WriteLine($"Genes: {genesOfFittestForAllTime}");
+            this.writer.WriteLine(Dashes);
+        }
+    }
+}

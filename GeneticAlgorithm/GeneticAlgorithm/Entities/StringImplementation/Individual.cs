@@ -9,6 +9,8 @@
 
         private readonly string chromosome;
 
+        public Individual() { }
+
         public Individual(string chromosome)
         {
             this.chromosome = chromosome;
@@ -19,11 +21,11 @@
             this.SetGenes();
         }
 
-        public int Fitness { get; private set; }
+        public int Fitness { get; set; }
 
-        public int GeneLength { get; private set; }
+        public int GeneLength { get; set; }
 
-        public char[] Genes { get; private set; }
+        public char[] Genes { get; set; }
 
         public void SetGenes()
         {

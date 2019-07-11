@@ -6,7 +6,9 @@
 
         int GeneLength { get; }
 
-        int PopulationSize { get;}
+        int PopulationSize { get; }
+
+        string Chromosome { get; }
 
         IIndividual<T>[] Individuals { get; }
 

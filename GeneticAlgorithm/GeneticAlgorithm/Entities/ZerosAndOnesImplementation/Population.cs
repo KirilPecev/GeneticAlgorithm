@@ -28,6 +28,8 @@
 
         public int GeneLength { get; private set; }
 
+        public string Chromosome { get; private set; }
+
         public void InitializePopulation()
         {
             for (int i = 0; i < PopulationSize; i++)

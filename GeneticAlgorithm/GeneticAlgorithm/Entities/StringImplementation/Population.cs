@@ -1,6 +1,5 @@
 ﻿namespace GeneticAlgorithm.Entities.StringImplementation
 {
-    using System;
     using Contracts;
     using Core.IO.Contracts;
 
@@ -13,7 +12,7 @@
         {
             this.GetPopulationSizeAndDesiredChromosome();
             this.Fittest = 0;
-            
+
             this.Individuals = new Individual[PopulationSize];
         }
 
@@ -37,56 +36,56 @@
             }
         }
 
-        public Individual GetFittest()
+        public IIndividual<char> GetFittestIndividual()
         {
             int maxFit = int.MinValue;
             int maxFitIndex = 0;
 
-            for (int i = 0; i < this.PopulationSize; i++)
+            for (int i = 0; i < PopulationSize; i++)
             {
-                if (maxFit <= this.Individuals[i].Fitness)
+                if (maxFit <= Individuals[i].Fitness)
                 {
-                    maxFit = this.Individuals[i].Fitness;
+                    maxFit = Individuals[i].Fitness;
                     maxFitIndex = i;
                 }
             }
 
-            Fittest = this.Individuals[maxFitIndex].Fitness;
+            FittestIndividual = Individuals[maxFitIndex].Fitness;
 
-            return this.Individuals[maxFitIndex];
+            return Individuals[maxFitIndex];
         }
 
-        public Individual GetSecondFittest()
+        public IIndividual<char> GetSecondFittestIndividual()
         {
             int currentIndex = 0;
             int maxFitIndex = 0;
 
-            for (int i = 0; i < this.PopulationSize; i++)
+            for (int i = 0; i < PopulationSize; i++)
             {
-                if (this.Individuals[i].Fitness >this.Individuals[currentIndex].Fitness)
+                if (Individuals[i].Fitness > Individuals[currentIndex].Fitness)
                 {
                     maxFitIndex = currentIndex;
                     currentIndex = i;
                 }
-                else if (this.Individuals[i].Fitness > this.Individuals[maxFitIndex].Fitness)
+                else if (Individuals[i].Fitness > Individuals[maxFitIndex].Fitness)
                 {
                     maxFitIndex = i;
                 }
             }
 
-            return this.Individuals[maxFitIndex];
+            return Individuals[maxFitIndex];
         }
 
-        public int GetLeastFittestIndex()
+        public int GetIndexOfWeakestIndividual()
         {
             int minFitVal = int.MaxValue;
             int minFitIndex = 0;
 
-            for (int i = 0; i < this.PopulationSize; i++)
+            for (int i = 0; i < PopulationSize; i++)
             {
-                if (minFitVal >= this.Individuals[i].Fitness)
+                if (minFitVal >= Individuals[i].Fitness)
                 {
-                    minFitVal = this.Individuals[i].Fitness;
+                    minFitVal = Individuals[i].Fitness;
                     minFitIndex = i;
                 }
             }
@@ -96,37 +95,12 @@
 
         public void CalculateFitness()
         {
-            for (int i = 0; i < this.PopulationSize; i++)
+            for (int i = 0; i < PopulationSize; i++)
             {
-                this.Individuals[i].CalculateFitness();
+                Individuals[i].CalculateFitness();
             }
 
-            this.GetFittest();
-        }
-
-        public IIndividual<int> GetFittestIndividual()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public int GetIndexOfWeakestIndividual()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IIndividual<int> GetSecondFittestIndividual()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        IIndividual<char> IPopulation<char>.GetFittestIndividual()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        IIndividual<char> IPopulation<char>.GetSecondFittestIndividual()
-        {
-            throw new System.NotImplementedException();
+            GetFittestIndividual();
         }
 
         private void GetPopulationSizeAndDesiredChromosome()

@@ -10,10 +10,13 @@
 
         public Population(IReader reader, IWriter writer)
         {
+            this.reader = reader;
+            this.writer = writer;
             this.GetPopulationSizeAndDesiredChromosome();
             this.Fittest = 0;
 
             this.Individuals = new Individual[PopulationSize];
+            this.InitializePopulation();
         }
 
         public int Fittest { get; private set; }

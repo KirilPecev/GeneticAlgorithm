@@ -44,10 +44,10 @@
                 generationCount++;
 
                 //Get the fittests 2 individuals from population
-                this.Selection();
+                Selection();
 
                 //Crossover among parents 
-                this.Crossover();
+                Crossover();
 
                 //Do mutation under a some probability
                 MutateUnderSomeProbability();
@@ -56,14 +56,13 @@
                 UpdateFitnessValuesFromOffspring();
 
                 //Replace weakest individual from population with fittest from offspring
-                this.ReplaceLeastFittestFromOffspring();
+                ReplaceLeastFittestFromOffspring();
 
                 //Calculate fitness foreach individual in population
-                this.population.CalculateFitness();
+                population.CalculateFitness();
 
                 //Print the current generation with his fittest individual and his genes
-                string genes = GetGenes(this.population.GetFittestIndividual().Genes);
-                this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
+                PrintStatus(generationCount);
 
                 CreateTheFittestForAllTimeIndividual(generationCount);
 
@@ -79,6 +78,12 @@
             PrintResult(generationCount, isStopped);
         }
 
+        private void PrintStatus(int generationCount)
+        {
+            string genes = GetGenes(this.population.GetFittestIndividual().Genes);
+            this.writer.WriteLine($"Generation: {generationCount} Fittest: {this.population.FittestIndividual} Genes: {genes}");
+        }
+
         public bool CheckForStop(int generationCount)
         {
             if (generationCount == MaxGenerationCount)
@@ -88,7 +93,6 @@
 
             return false;
         }
-
 
         private void MutateUnderSomeProbability()
         {

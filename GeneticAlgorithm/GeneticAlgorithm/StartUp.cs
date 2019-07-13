@@ -5,7 +5,7 @@
     using Core.IO;
     using Core.IO.Contracts;
     using Entities.Contracts;
-    using Entities.ZerosAndOnesImplementation;
+    using Entities.StringImplementation;
 
     public class StartUp
     {
@@ -14,9 +14,9 @@
             IReader reader = new ConsoleReader();
             IWriter writer = new ConsoleWriter();
 
-            IPopulation<int> population = new Population(reader, writer);
+            IPopulation<char> population = new Population(reader, writer);
 
-            IGenerator<int> generator = new Generator(population, writer);
+            IGenerator<char> generator = new Generator(population, writer);
 
             IEngine engine = new Engine(generator);
 

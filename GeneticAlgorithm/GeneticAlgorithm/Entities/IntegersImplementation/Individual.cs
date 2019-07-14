@@ -43,7 +43,7 @@
             {
                 if (Genes[i] == 1)
                 {
-                    //The fitness is incemented by one
+                    //The fitness is incremented by one
                     Fitness++;
                 }
             }

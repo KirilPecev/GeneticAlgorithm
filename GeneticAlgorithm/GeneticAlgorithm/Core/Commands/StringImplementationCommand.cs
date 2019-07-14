@@ -10,14 +10,14 @@
         private readonly IReader reader;
         private readonly IWriter writer;
         private readonly IPopulation<char> population;
-        private readonly IGenerator<char> generator;
+        private readonly StringGenerator generator;
 
         public StringImplementationCommand(IReader reader, IWriter writer)
         {
             this.reader = reader;
             this.writer = writer;
             this.population = new Population(this.reader, this.writer);
-            this.generator = new Generator(population, writer);
+            this.generator = new StringGenerator(population, writer);
         }
 
         public void Execute()

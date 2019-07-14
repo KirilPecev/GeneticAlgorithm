@@ -16,13 +16,13 @@
         {
             this.reader = reader;
             this.writer = writer;
-            this.population = new Population(this.reader, this.writer);
-            this.generator = new IntegersGenerator(population, writer);
+            population = new Population(this.reader, this.writer);
+            generator = new IntegersGenerator(population, writer);
         }
 
         public void Execute()
         {
-            this.generator.Generate();
+            generator.Generate();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace GeneticAlgorithm.Entities.IntegersImplementation
 {
-    using Entities.Contracts;
+    using Contracts;
     using System;
 
     public class Individual : IIndividual<int>

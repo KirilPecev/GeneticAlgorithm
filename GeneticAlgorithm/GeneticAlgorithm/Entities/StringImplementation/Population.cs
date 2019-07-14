@@ -12,12 +12,13 @@
         {
             this.reader = reader;
             this.writer = writer;
-            this.GetPopulationSizeAndDesiredChromosome();
-            this.Fittest = 0;
 
-            this.Individuals = new Individual[PopulationSize];
-            this.InitializePopulation();
-            this.CalculateFitness();
+            Fittest = 0;
+            Individuals = new Individual[PopulationSize];
+
+            GetPopulationSizeAndDesiredChromosome();
+            InitializePopulation();
+            CalculateFitness();
         }
 
         public int Fittest { get; private set; }
@@ -36,7 +37,7 @@
         {
             for (int i = 0; i < this.PopulationSize; i++)
             {
-                this.Individuals[i] = new Individual(Chromosome);
+                Individuals[i] = new Individual(Chromosome);
             }
         }
 
@@ -121,8 +122,8 @@
 
                 if (sizeResult && !string.IsNullOrEmpty(chromosome))
                 {
-                    this.PopulationSize = size;
-                    this.Chromosome = chromosome;
+                    PopulationSize = size;
+                    Chromosome = chromosome;
                     break;
                 }
             }

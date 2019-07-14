@@ -184,28 +184,34 @@
 
         protected virtual void PrintResult(int generationCount, bool isStopped)
         {
-            if (isStopped)
-            {
-                PrintTheBestFindResult();
-                return;
-            }
+            T[] genes = population.GetFittestIndividual().Genes;
+            int fitness = population.GetFittestIndividual().Fitness;
 
-            writer.WriteLine(Dashes);
-            writer.WriteLine($"Solution found in generation {generationCount}");
-            writer.WriteLine($"Fitness: {population.GetFittestIndividual().Fitness}");
-            string fittestGenes = GetGenes(population.GetFittestIndividual().Genes);
-            writer.WriteLine($"Genes: {fittestGenes}");
-            writer.WriteLine(Dashes);
+            PrintGenerationNumber(generationCount, isStopped, ref genes, ref fitness);
+            PrintFitnessAndGenes(genes, fitness);
         }
 
-        protected virtual void PrintTheBestFindResult()
+        protected virtual void PrintGenerationNumber(int generationCount, bool isStopped, ref T[] genes, ref int fitness)
         {
             writer.WriteLine(Dashes);
-            writer.WriteLine($"The best solution is found in generation {BestGeneration}");
-            writer.WriteLine($"Fitness: {FittestIndividualForAllTime.Fitness}");
+            if (isStopped)
+            {
+                genes = FittestIndividualForAllTime.Genes;
+                fitness = FittestIndividualForAllTime.Fitness;
+                writer.WriteLine($"The best solution is found in generation {BestGeneration}");
+            }
+            else
+            {
+                writer.WriteLine($"Solution found in generation {generationCount}");
+            }
+        }
 
-            string genesOfFittestForAllTime = GetGenes(FittestIndividualForAllTime.Genes);
-            writer.WriteLine($"Genes: {genesOfFittestForAllTime}");
+        protected virtual void PrintFitnessAndGenes(T[] genes, int fitness)
+        {
+            string fittestGenes = GetGenes(genes);
+
+            writer.WriteLine($"Fitness: {fitness}");
+            writer.WriteLine($"Genes: {fittestGenes}");
             writer.WriteLine(Dashes);
         }
     }

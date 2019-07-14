@@ -1,7 +1,7 @@
 ﻿namespace GeneticAlgorithm.Entities.IntegersImplementation
 {
+    using Contracts;
     using Core.IO.Contracts;
-    using Entities.Contracts;
 
     public class Population : IPopulation<int>
     {
@@ -12,10 +12,11 @@
         {
             this.reader = reader;
             this.writer = writer;
+
             FittestIndividual = 0;
+            Individuals = new Individual[PopulationSize];
 
             GetPopulationAndGeneLength();
-            Individuals = new Individual[PopulationSize];
             InitializePopulation();
             CalculateFitness();
         }

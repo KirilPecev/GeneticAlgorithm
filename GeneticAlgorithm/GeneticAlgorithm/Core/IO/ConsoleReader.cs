@@ -1,6 +1,6 @@
 ﻿namespace GeneticAlgorithm.Core.IO
 {
-    using GeneticAlgorithm.Core.IO.Contracts;
+    using Contracts;
     using System;
 
     public class ConsoleReader : IReader

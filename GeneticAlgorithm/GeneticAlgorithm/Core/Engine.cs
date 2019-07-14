@@ -21,8 +21,9 @@
             this.reader = reader;
             this.writer = writer;
             this.cleaner = cleaner;
-            this.assembly = Assembly.GetExecutingAssembly();
-            this.types = assembly.GetExportedTypes()
+
+            assembly = Assembly.GetExecutingAssembly();
+            types = assembly.GetExportedTypes()
                          .Where(x => x.Name.EndsWith("Command"))
                          .ToArray();
         }
@@ -32,9 +33,9 @@
             int commandNumber = 0;
             while (true)
             {
-                this.writer.Write(this.menu.Show());
+                writer.Write(this.menu.Show());
                 bool result = int.TryParse(this.reader.ReadLine(), out commandNumber);
-                this.cleaner.Clean();
+                cleaner.Clean();
                 if (result)
                 {
                     try
@@ -57,7 +58,7 @@
                                 .ToLower()
                                 .StartsWith(commandName));
 
-            object classInstance = Activator.CreateInstance(commandType, new object[] { this.reader, this.writer });
+            object classInstance = Activator.CreateInstance(commandType, new object[] { reader, writer });
 
             MethodInfo method = commandType.GetMethod("Execute");
             method.Invoke(classInstance, new object[] { });

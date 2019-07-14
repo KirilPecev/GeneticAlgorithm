@@ -6,12 +6,14 @@
 
     public class StringGenerator : GeneticAlgorithm<char>
     {
+        private const char MutationChar = '#';
+
         public StringGenerator(IPopulation<char> population, IWriter writer)
             : base(population, writer)
         {
-            this.FittestIndividual = new Individual(population.Chromosome);
-            this.SecondFittestIndividual = new Individual(population.Chromosome);
-            this.FittestIndividualForAllTime = new Individual(population.Chromosome);
+            FittestIndividual = new Individual(population.Chromosome);
+            SecondFittestIndividual = new Individual(population.Chromosome);
+            FittestIndividualForAllTime = new Individual(population.Chromosome);
         }
 
         protected override void FlipValues(IIndividual<char> individual, int mutationPoint)
@@ -22,22 +24,22 @@
             }
             else
             {
-                individual.Genes[mutationPoint] = '#';
+                individual.Genes[mutationPoint] = MutationChar;
             }
         }
 
         public override void CreateTheFittestForAllTimeIndividual(int generationCount)
         {
-            if (this.FittestIndividualForAllTime.Fitness <= this.FittestIndividual.Fitness)
+            if (FittestIndividualForAllTime.Fitness <= FittestIndividual.Fitness)
             {
-                this.FittestIndividualForAllTime = new Individual
+                FittestIndividualForAllTime = new Individual
                 {
-                    GeneLength = this.FittestIndividual.GeneLength,
+                    GeneLength = FittestIndividual.GeneLength,
                     Genes = GetGenes(FittestIndividual),
-                    Fitness = this.FittestIndividual.Fitness
+                    Fitness = FittestIndividual.Fitness
                 };
 
-                this.BestGeneration = generationCount;
+                BestGeneration = generationCount;
             }
         }
 

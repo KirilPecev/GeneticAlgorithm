@@ -34,6 +34,7 @@
             {
                 this.writer.Write(this.menu.Show());
                 bool result = int.TryParse(this.reader.ReadLine(), out commandNumber);
+                this.cleaner.Clean();
                 if (result)
                 {
                     try
@@ -43,8 +44,6 @@
                     }
                     catch (Exception) { }
                 }
-
-                this.cleaner.Clean();
             }
         }
 

@@ -1,4 +1,4 @@
-﻿namespace GeneticAlgorithm.Entities.ZerosAndOnesImplementation
+﻿namespace GeneticAlgorithm.Entities.IntegersImplementation
 {
     using Entities.Contracts;
     using System;
@@ -9,11 +9,11 @@
 
         public Individual(int geneLength)
         {
-            this.GeneLength = geneLength;
-            this.Fitness = 0;
-            this.Genes = new int[this.GeneLength];
+            GeneLength = geneLength;
+            Fitness = 0;
+            Genes = new int[GeneLength];
 
-            this.SetGenes();
+            SetGenes();
         }
 
         public int[] Genes { get; set; }
@@ -24,9 +24,9 @@
 
         public void SetGenes()
         {
-            for (int i = 0; i < this.GeneLength; i++)
+            for (int i = 0; i < GeneLength; i++)
             {
-                this.Genes[i] = GetGene();
+                Genes[i] = GetGene();
             }
         }
 
@@ -38,13 +38,13 @@
 
         public void CalculateFitness()
         {
-            this.Fitness = 0;
-            for (int i = 0; i < this.GeneLength; i++)
+            Fitness = 0;
+            for (int i = 0; i < GeneLength; i++)
             {
-                if (this.Genes[i] == 1)
+                if (Genes[i] == 1)
                 {
                     //The fitness is incemented by one
-                    this.Fitness++;
+                    Fitness++;
                 }
             }
         }

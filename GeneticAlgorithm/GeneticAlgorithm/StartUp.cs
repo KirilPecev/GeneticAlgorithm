@@ -4,21 +4,17 @@
     using Core.Contracts;
     using Core.IO;
     using Core.IO.Contracts;
-    using Entities.Contracts;
-    using Entities.StringImplementation;
 
     public class StartUp
     {
         public static void Main(string[] args)
         {
+            IMenu menu = new Menu();
             IReader reader = new ConsoleReader();
             IWriter writer = new ConsoleWriter();
+            ICleaner cleaner = new ConsoleCleaner();
 
-            IPopulation<char> population = new Population(reader, writer);
-
-            IGenerator<char> generator = new Generator(population, writer);
-
-            IEngine engine = new Engine(generator);
+            IEngine engine = new Engine(menu, reader, writer, cleaner);
 
             engine.Run();
         }

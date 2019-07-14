@@ -17,6 +17,7 @@
 
             this.Individuals = new Individual[PopulationSize];
             this.InitializePopulation();
+            this.CalculateFitness();
         }
 
         public int Fittest { get; private set; }

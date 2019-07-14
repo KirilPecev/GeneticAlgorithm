@@ -1,20 +1,67 @@
 ﻿namespace GeneticAlgorithm.Core
 {
     using Contracts;
-    using Entities.Contracts;
+    using IO.Contracts;
+    using System;
+    using System.Linq;
+    using System.Reflection;
 
     public class Engine : IEngine
     {
-        private readonly IGenerator<char> generator;
+        private readonly IMenu menu;
+        private readonly IReader reader;
+        private readonly IWriter writer;
+        private readonly ICleaner cleaner;
+        private readonly Assembly assembly;
+        private readonly Type[] types;
 
-        public Engine(IGenerator<char> generator)
+        public Engine(IMenu menu, IReader reader, IWriter writer, ICleaner cleaner)
         {
-            this.generator = generator;
+            this.menu = menu;
+            this.reader = reader;
+            this.writer = writer;
+            this.cleaner = cleaner;
+            this.assembly = Assembly.GetExecutingAssembly();
+            this.types = assembly.GetExportedTypes()
+                         .Where(x => x.Name.EndsWith("Command"))
+                         .ToArray();
         }
 
         public void Run()
         {
-            this.generator.Generate();
+            int commandNumber = 0;
+            while (true)
+            {
+                this.writer.Write(this.menu.Show());
+                bool result = int.TryParse(this.reader.ReadLine(), out commandNumber);
+                if (result)
+                {
+                    try
+                    {
+                        ExecuteCommand(commandNumber);
+                        break;
+                    }
+                    catch (Exception) { }
+                }
+
+                this.cleaner.Clean();
+            }
+        }
+
+        private void ExecuteCommand(int command)
+        {
+            string commandName = this.menu.GetCommand(command).ToLower();
+
+            Type commandType = types
+                .FirstOrDefault(c => c.Name
+                                .ToString()
+                                .ToLower()
+                                .StartsWith(commandName));
+
+            object classInstance = Activator.CreateInstance(commandType, new object[] { this.reader, this.writer });
+
+            MethodInfo method = commandType.GetMethod("Execute");
+            method.Invoke(classInstance, new object[] { });
         }
     }
 }

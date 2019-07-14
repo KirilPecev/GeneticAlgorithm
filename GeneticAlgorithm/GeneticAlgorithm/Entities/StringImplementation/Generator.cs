@@ -97,11 +97,16 @@
         {
             int probability = GetRandomProbability();
 
-            if (probability < this.population.GeneLength)
+            if (ShouldMutate(probability))
             {
                 //Mutate the fittests 2 of population
                 Mutation();
             }
+        }
+
+        private bool ShouldMutate(int probability)
+        {
+            return probability < this.population.GeneLength;
         }
 
         private static int GetRandomProbability()

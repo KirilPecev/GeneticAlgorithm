@@ -1,4 +1,4 @@
-﻿namespace GeneticAlgorithm.Entities.ZerosAndOnesImplementation
+﻿namespace GeneticAlgorithm.Entities.IntegersImplementation
 {
     using Core.IO.Contracts;
     using Entities.Contracts;

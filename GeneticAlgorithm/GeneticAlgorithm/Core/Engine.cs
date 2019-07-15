@@ -24,7 +24,10 @@
 
             assembly = Assembly.GetExecutingAssembly();
             types = assembly.GetExportedTypes()
-                         .Where(x => x.Name.EndsWith("Command"))
+                         .Where(x => x.Name.EndsWith("Command")
+                         && typeof(ICommand).IsAssignableFrom(x)
+                         && !x.IsInterface
+                         && !x.IsAbstract)
                          .ToArray();
         }
 

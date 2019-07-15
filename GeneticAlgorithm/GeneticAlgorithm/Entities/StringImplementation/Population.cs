@@ -13,15 +13,14 @@
             this.reader = reader;
             this.writer = writer;
 
-            Fittest = 0;
-            Individuals = new Individual[PopulationSize];
+            FittestIndividual = 0;
 
             GetPopulationSizeAndDesiredChromosome();
+            Individuals = new Individual[PopulationSize];
+
             InitializePopulation();
             CalculateFitness();
         }
-
-        public int Fittest { get; private set; }
 
         public string Chromosome { get; private set; }
 

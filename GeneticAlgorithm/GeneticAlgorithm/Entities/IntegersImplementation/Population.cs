@@ -14,9 +14,10 @@
             this.writer = writer;
 
             FittestIndividual = 0;
-            Individuals = new Individual[PopulationSize];
 
             GetPopulationAndGeneLength();
+            Individuals = new Individual[PopulationSize];
+
             InitializePopulation();
             CalculateFitness();
         }
@@ -35,7 +36,7 @@
         {
             for (int i = 0; i < PopulationSize; i++)
             {
-                Individuals[i] = new Individual(GeneLength);
+                this.Individuals[i] = new Individual(GeneLength);
             }
         }
 

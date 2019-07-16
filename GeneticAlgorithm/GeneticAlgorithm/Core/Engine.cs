@@ -8,6 +8,9 @@
 
     public class Engine : IEngine
     {
+        private const string CommandSuffix = "Command";
+        private const string CommandMethod = "Execute";
+
         private readonly IMenu menu;
         private readonly IReader reader;
         private readonly IWriter writer;
@@ -24,7 +27,7 @@
 
             assembly = Assembly.GetExecutingAssembly();
             types = assembly.GetExportedTypes()
-                         .Where(x => x.Name.EndsWith("Command")
+                         .Where(x => x.Name.EndsWith(CommandSuffix)
                          && typeof(ICommand).IsAssignableFrom(x)
                          && !x.IsInterface
                          && !x.IsAbstract)
@@ -33,12 +36,10 @@
 
         public void Run()
         {
-            int commandNumber = 0;
             while (true)
             {
-                writer.Write(this.menu.Show());
-                bool result = int.TryParse(this.reader.ReadLine(), out commandNumber);
-                cleaner.Clean();
+                int commandNumber = 0;
+                bool result = ReadCommand(out commandNumber);
                 if (result)
                 {
                     try
@@ -49,6 +50,14 @@
                     catch (Exception) { }
                 }
             }
+        }
+
+        private bool ReadCommand(out int commandNumber)
+        {
+            writer.Write(this.menu.Show());
+            bool result = int.TryParse(this.reader.ReadLine(), out commandNumber);
+            cleaner.Clean();
+            return result;
         }
 
         private void ExecuteCommand(int command)
@@ -63,7 +72,7 @@
 
             object classInstance = Activator.CreateInstance(commandType, new object[] { reader, writer });
 
-            MethodInfo method = commandType.GetMethod("Execute");
+            MethodInfo method = commandType.GetMethod(CommandMethod);
             method.Invoke(classInstance, new object[] { });
         }
     }
